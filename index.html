@@ -1,0 +1,390 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Enter FullScreen</title>
+<script src="http://threejs.org/build/three.min.js"></script>
+<script src="http://threejs.org/examples/js/libs/tween.min.js"></script>
+<script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+	
+	body {
+		overflow: hidden;
+		
+	}
+	
+#Welcome {
+color: blueviolet;
+position: absolute; 
+left: 5%;
+top: 15%;
+font-size: 80px;
+font-family: "OCR A Std";
+z-index: 2;
+animation: shine 5.5s infinite;
+text-shadow: 3px 3px whitesmoke;
+}	
+	
+#Name {
+color: blueviolet;
+position: absolute; 
+left: 5%;
+top: 30%;
+text-align: left;
+font-size: 80px;
+font-family: "OCR A Std";
+z-index: 2;
+animation: shine 5.5s infinite;	
+text-shadow: 3px 3px whitesmoke;	
+}
+   @keyframes shine {
+       
+	    
+	    0% {
+          color: violet;
+        }
+	    20% {
+          color: indigo;
+        }
+	    30% {
+          color: blue;
+        }
+	    40% {
+          color: green;
+        }
+	    50% {
+          color: yellow;
+        }
+	    60% {
+          color: orange;
+        }
+	    70% {
+          color: red;
+        }
+	    80% {
+          color: aqua;
+        }
+	   90% {
+          color: darkviolet;
+        }
+	   
+	    100% {
+          color: orangered;
+        }
+	    
+        }
+
+	
+	 #canvas {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0%;
+		left: 0%;
+		z-index: 0; 
+	}	
+	#Jump {
+	position: absolute;
+	top: 60%;
+	left: 5%;
+	color: whitesmoke;
+	font-weight: bold;
+	z-index: 4;
+	font-size: 30px;
+    animation: shine 5.5s infinite;
+    display: none; 
+	text-shadow: 0.5px 0.5px whitesmoke;
+	}
+
+	#Tree {
+		position: absolute; 
+		top: 10%; 
+		left: 10%; 
+		z-index: 2;
+		display: none;
+	}
+	#Star {
+		position: absolute; 
+		top: 10%; 
+		left: 10%; 
+		z-index: 2;
+		display: none;
+	}
+	#Beeds {
+		position: absolute; 
+		top: 40%; 
+		left: 70%; 
+		z-index: 2;
+		display: none;
+	}
+	#Plane {
+		position: absolute; 
+		top: 10%; 
+		left: 10%; 
+		z-index: 2;
+		display: none;
+	}
+	#PlaneBomb {
+		position: absolute; 
+		top: 40%; 
+		left: 40%; 
+		z-index: 2;
+		display: none;
+	}
+	#Error {
+		position: absolute; 
+		top: 0%; 
+		left: 0%; 
+		width: 100%; 
+		height: 100%;
+		z-index: 2;
+		display: none;
+	}
+	#DefultImg {
+		position: absolute; 
+		top: 10%; 
+		left: 10%; 
+		z-index: 2;
+		display: none;
+	}
+
+</style>
+</head>
+
+<body onClick="Next()" onLoad="Load()">
+	
+<p id="Welcome"> </p>
+<p id="Name"></p>
+<audio id="Typing" src="TypingSound.mp3" type="audio/mp3" autoplay> </audio>
+<audio id="StartMusic" src="IntroMusic.mp3" type="audio/mp3" loop autoplay> </audio>
+<img id="Plane" src="Plane.png" width="300px" height="500px">
+<img id="PlaneBomb" src="PlaneBomb.png" width="300px" height="200px">  
+<img id="Tree" src="Tree.png" width="300px" height="500px"> 
+<img id="Star" src="Star.png" width="300px" height="500px"> 
+<img id="Beeds" src="Beeds.png" width="200px" height="200px">
+<img id="Error" src="Error.jpg" width="2000px" height="2000px">
+<img id="DefultImg" src="DefultImg.jpg" width="300px" height="500px">
+ 
+<script>
+	window.alert("THE FOLLOW IS IN EXTREME FETA AND WILL BE UPDATED");
+let scene, camera, renderer, skyboxGeo, skybox, material, cubematerials, skybox1, skybox2, skybox3; //Sets ThreeJs Variables 
+var StartPosition = true; //Asks it the user is at the start 
+var RotateFirstCubeVar = true; //Rotates The First Cube
+var MoveFirstCubeCenter = true; //Moves The First Cube To The Center
+var ZoomInFirstCube = true; 
+var CameraX = -9999; 
+var CameraY = -300;
+var CameraZ = 20000;
+var RoatateFirstBox = true; 
+var RoatateSecondBox = true; 
+var RoatateThirdBox = true; 
+var StandardCubeZoomIn = false;
+var ZoomStandardCube = true;  
+
+function Load() {
+InitializeThreeJs(); 
+//Enable Intro Text 
+}
+//Triggers A Function Based On The Users Position 
+function Next() {
+if (StartPosition) {
+	TransitionOne(); //Calls The Transition Function 
+	StartPosition = false; 
+}
+if (StandardCubeZoomIn) {
+		ZoomInStandardCube(); 
+		StandardCubeZoomIn = false; 
+	}
+}
+//Creates A Basic Three.js Scene 
+function InitializeThreeJs() {
+scene = new THREE.Scene(); 
+ camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 45, 30000); 
+  camera.position.set(-9999, -300, 20000); 
+   renderer = new THREE.WebGLRenderer({ antialias: true }); 
+    renderer.setSize(window.innerWidth, window.innerHeight); 
+	 document.body.appendChild(renderer.domElement); 
+      renderer.domElement.id = "canvas"; 
+	   AddFirstCube(); 
+	   Animate(); 
+}
+
+function Animate() {
+renderer.render(scene, camera); 
+ requestAnimationFrame(Animate); 
+}
+//Adds First Text  
+function IntroText() {
+var Welcome = document.getElementById("Welcome"); 
+var Name = document.getElementById("Name"); 
+setTimeout(function(){Welcome.innerHTML = "I"; },200); 
+setTimeout(function(){Welcome.innerHTML = "In";},400); 
+setTimeout(function(){Welcome.innerHTML = "Int";},600); 
+setTimeout(function(){Welcome.innerHTML = "Intr";},800); 
+setTimeout(function(){Welcome.innerHTML = "Intro";},1000); 
+setTimeout(function(){Welcome.innerHTML = "Introd";},1200); 
+setTimeout(function(){Welcome.innerHTML = "Introdu";},1400); 
+setTimeout(function(){Welcome.innerHTML = "Introduc";},1600); 
+setTimeout(function(){Welcome.innerHTML = "Introduci";},1800); 
+setTimeout(function(){Welcome.innerHTML = "Introducin";},2000); 
+setTimeout(function(){Welcome.innerHTML = "Introducing";},2200); 
+setTimeout(function(){Name.innerHTML = "T";},2400); 
+setTimeout(function(){Name.innerHTML = "Th";},2600); 
+setTimeout(function(){Name.innerHTML = "The";},2800); 
+setTimeout(function(){Name.innerHTML = "The C";},3000); 
+setTimeout(function(){Name.innerHTML = "The Cr";},3200); 
+setTimeout(function(){Name.innerHTML = "The Cra";},3400); 
+setTimeout(function(){Name.innerHTML = "The Craf";},3600); 
+setTimeout(function(){Name.innerHTML = "The Craft";},3800); 
+setTimeout(function(){Name.innerHTML = "The Craft C";},4000); 
+setTimeout(function(){Name.innerHTML = "The Craft Co";},4200); 
+setTimeout(function(){Name.innerHTML = "The Craft Com";},4400); 
+setTimeout(function(){Name.innerHTML = "The Craft Comp";},4600); 
+setTimeout(function(){Name.innerHTML = "The Craft Compa";},4800); 
+setTimeout(function(){Name.innerHTML = "The Craft Compan";},5000); 
+setTimeout(function(){Name.innerHTML = "The Craft Company";},5200); 
+}
+//Creates And Adds The First Cube
+function AddFirstCube() {
+cubematerials = [ 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}),  
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}) 
+]; 
+material = new THREE.MeshFaceMaterial(cubematerials);  
+skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000); 
+skybox = new THREE.Mesh(skyboxGeo, material); 
+scene.add(skybox); 
+RotateFirstCube(); 
+}
+
+function RotateFirstCube() {
+skybox.rotation.x += 0.005; 
+skybox.rotation.y += 0.005; 
+if (RotateFirstCubeVar) {
+	requestAnimationFrame(RotateFirstCube); 
+}
+
+}
+
+function TransitionOne() {
+	$("#Welcome").fadeOut(1000); 
+	$("#Name").fadeOut(1000); 
+	if (MoveFirstCubeCenter) {
+		  CameraX = CameraX + 50; 
+		  camera.position.set(CameraX, -300, 20000);
+		  requestAnimationFrame(TransitionOne);
+		  if (CameraX > 0) {
+			  MoveFirstCubeCenter = false; 
+			  TransitionTwo(); 
+		  }
+	}
+}
+
+function TransitionTwo() {
+	if (ZoomInFirstCube) {
+		  CameraZ = CameraZ - 50; 
+		  camera.position.set(CameraX, -300, CameraZ);
+		  requestAnimationFrame(TransitionTwo);
+		  if (CameraZ < 1) {
+			  ZoomInFirstCube = false; 
+			   scene.remove(skybox); 
+			    camera.position.set(-9999, -300, 20000);
+				 AddBoxes(); 
+		  }
+	}
+}
+
+function AddBoxes() {
+cubematerials = [ 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}),  
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}) 
+]; 
+material = new THREE.MeshFaceMaterial(cubematerials);  
+skyboxGeo = new THREE.BoxGeometry(7000, 7000, 7000); 
+skybox1 = new THREE.Mesh(skyboxGeo, material); 
+scene.add(skybox1); 
+skybox1.position.set(2000, -300, 0); 
+
+cubematerials = [ 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}),  
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}) 
+]; 
+material = new THREE.MeshFaceMaterial(cubematerials);  
+skyboxGeo = new THREE.BoxGeometry(7000, 7000, 7000); 
+skybox2 = new THREE.Mesh(skyboxGeo, material); 
+scene.add(skybox2); 
+skybox2.position.set(-10000, -300, 0); 
+
+cubematerials = [ 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}),  
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}), 
+new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("Crate.jpg"), side: THREE.DoubleSide}) 
+]; 
+material = new THREE.MeshFaceMaterial(cubematerials);  
+skyboxGeo = new THREE.BoxGeometry(7000, 7000, 7000); 
+skybox3 = new THREE.Mesh(skyboxGeo, material); 
+scene.add(skybox3); 
+skybox3.position.set(-22000, -300, 0); 
+RotateBoxes(); 
+StandardCubeZoomIn = true; 
+CameraX = CameraX - 9999; 
+CameraZ = CameraZ + 20000; 
+}
+function RotateBoxes() {
+if (RoatateFirstBox) {
+skybox1.rotation.x += 0.005; 
+skybox1.rotation.y += 0.005;
+}
+if (RoatateSecondBox) {
+skybox2.rotation.x += 0.005; 
+skybox2.rotation.y += 0.005;
+}
+if (RoatateThirdBox) {
+skybox3.rotation.x += 0.005; 
+skybox3.rotation.y += 0.005;
+}
+requestAnimationFrame(RotateBoxes);  
+}
+
+function ZoomInStandardCube() {
+if (ZoomStandardCube) {
+	CameraX = CameraX - 70; 
+	 CameraZ = CameraZ - 100; 
+		  camera.position.set(CameraX, -300, CameraZ);
+		  requestAnimationFrame(ZoomInStandardCube);
+		  if (CameraZ < 0) {
+			  ZoomStandardCube = false; 
+			  AddStandardContents(); 
+		  }
+	}
+}
+function AddStandardContents() {
+	scene.remove(skybox1);
+	scene.remove(skybox2);
+	scene.remove(skybox3);
+	camera.position.set(-9999, -300, 20000); 
+	
+
+}
+
+
+</script>
+</body>
+</html>
